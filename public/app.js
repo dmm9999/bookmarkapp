@@ -48,15 +48,43 @@ function addBookmark (e) {
   e.preventDefault();
   var title = document.querySelector('.title').value;
   var url = document.querySelector('.url').value;
+  url = fixUrl(url);
   var bookmark = {title: title, url: url};
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', "http://localhost:3000/bookmarks/", true);
-  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  xhr.send(JSON.stringify(bookmark));
-  xhr.onload = function () {
-    repopulateBookmarks();
-    addMessage("Bookmark Added!");
-  };
+  if (isValidBookmark(bookmark)) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', "http://localhost:3000/bookmarks/", true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify(bookmark));
+    xhr.onload = function () {
+      repopulateBookmarks();
+      addMessage("Bookmark Added!");
+      resetFields();
+    };
+  } else {
+    addMessage("Invalid Bookmark!");
+  }
+}
+
+function isValidBookmark (bookmark) {
+  return bookmark.title.length > 0 && bookmark.url.length > 0;
+}
+
+function fixUrl (url) {
+  if (url.slice(0,7) === "http://") {
+    return url;
+  } else if (url.slice(0,4) === "www.") {
+    return "http://" + url;
+  } else {
+    return "http://www." + url;
+  }
+}
+
+function resetFields () {
+  var fields = document.querySelectorAll('form input');
+  var title = fields[0];
+  var url = fields[1];
+  title.value = "";
+  url.value = "";
 }
 
 function createDeleteButton (id) {
