@@ -1,0 +1,66 @@
+html, body, h1, h2, ul, li {
+  border: 0;
+  outline: 0;
+  margin: 0;
+  padding: 0;
+
+  box-sizing: inherit;
+  font: inherit;
+  text-align: inherit;
+  text-decoration: inherit;
+  color: inherit;
+
+  background: transparent;
+}
+
+.group:after {
+  display: block;
+  clear: both;
+  content: "";
+}
+
+@font-face{
+    font-family: Bookmark;
+    src: url('./bookmark.ttf');
+}
+
+body {
+  font-family: Bookmark;
+  background: #EAD4A2;
+}
+
+h1 {
+  font-size: 36px;
+  color: blue;
+  text-align: center;
+}
+
+h2 {
+  font-size: 24px;
+  color: green;
+  text-align: center;
+}
+
+ul {
+  display: block;
+  list-style: none;
+  text-align: center;
+  background: white;
+  width: 30%;
+  margin: auto;
+  border-radius: 10px;
+}
+
+form {
+  text-align: center;
+}
+
+
+.delete {
+  color: purple;
+}
+
+.message {
+  text-align: center;
+  color: red;
+}
