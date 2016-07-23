@@ -12,31 +12,22 @@ function retrieveBookmarks () {
   xhr.send(null);
 }
 
-function clearBookmarks () {
-  var element = document.querySelector('ul');
-  while (element.firstChild) {
-    element.removeChild(element.firstChild);
-  }
-}
-
 function appendBookmarks (bookmarks) {
   var element = document.querySelector('ul');
   for (var i in bookmarks) {
-    var li = document.createElement('li');
-    var title = bookmarks[i].title;
-    var url = bookmarks[i].url;
-    li.innerHTML = '<a href="' + url + '">' + title + '</a';
-    li.setAttribute('id', i);
-    element.appendChild(li);
-    var deleteButton = createDeleteButton(i);
-    element.appendChild(deleteButton);
+    appendBookmark(element, bookmarks[i]);
   }
 }
 
-
-function repopulateBookmarks () {
-  clearBookmarks();
-  retrieveBookmarks();
+function appendBookmark (target, bookmark) {
+  var li = document.createElement('li');
+  var title = bookmark.title;
+  var url = bookmark.url;
+  li.innerHTML = '<a href="' + url + '">' + title + '</a';
+  li.setAttribute('id', bookmark.id);
+  target.appendChild(li);
+  var deleteButton = createDeleteButton(bookmark.id);
+  target.appendChild(deleteButton);
 }
 
 function attachAddButton () {
@@ -48,18 +39,22 @@ function addBookmark (e) {
   e.preventDefault();
   var title = document.querySelector('.title').value;
   var url = document.querySelector('.url').value;
-  url = fixUrl(url);
   var bookmark = {title: title, url: url};
   if (isValidBookmark(bookmark)) {
+    bookmark.url = fixUrl(url);
     var xhr = new XMLHttpRequest();
     xhr.open('POST', "http://localhost:3000/bookmarks/", true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send(JSON.stringify(bookmark));
-    xhr.onload = function () {
-      repopulateBookmarks();
+    xhr.onload = function (data) {
+      bookmarkID = JSON.parse(data.currentTarget.response).id;
+      bookmark.id = bookmarkID;
+      debugger
+      var element = document.querySelector('ul');
+      appendBookmark(element, bookmark);
       addMessage("Bookmark Added!");
       resetFields();
-    };
+      };
   } else {
     addMessage("Invalid Bookmark!");
   }
@@ -102,9 +97,14 @@ function deleteBookmark (id) {
   xhr.open('DELETE', url);
   xhr.send(null);
   xhr.onload = function () {
-    repopulateBookmarks();
+    removeBookmark(id);
     addMessage("Bookmark Deleted!");
   };
+}
+
+function removeBookmark (id) {
+  document.getElementById(id).nextSibling.remove();
+  document.getElementById(id).remove();
 }
 
 function addMessage (text) {
@@ -120,6 +120,5 @@ function removeMessage () {
   var message = document.querySelector('.message');
   message.parentNode.removeChild(message);
 }
-
 
 document.addEventListener('DOMContentLoaded', initialize);

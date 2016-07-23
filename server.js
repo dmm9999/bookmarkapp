@@ -32,7 +32,7 @@ app.get('/bookmarks', function (req, res) {
 });
 
 app.post('/bookmarks', function (req, res) {
-  var bookmark = {title : req.body.title, url : req.body.url};
+  var bookmark = {id: idIncrementer, title : req.body.title, url : req.body.url};
   var content;
 fs.readFile('bookmarks.json', function (err, data) {
     if (err) {
@@ -49,7 +49,7 @@ fs.readFile('bookmarks.json', function (err, data) {
       }
     });
   });
-  res.send(null);
+  res.send({id : bookmark.id});
 });
 
 app.delete('/bookmarks/:id', function (req, res) {
